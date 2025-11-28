@@ -6,89 +6,88 @@
     <title>Калькулятор завершения сборки</title>
     <style>
         /* Основные стили */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
-            color: #333;
+            color: #f3f0e8;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
             position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #1a2a6c 0%, #2a4d69 50%, #4b86b4 100%);
+            overflow-x: hidden;
+            overflow-y: auto; /* Разрешаем вертикальный скролл */
         }
         
-        /* Фон склада */
+        /* Фон с золотыми акцентами */
         body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.05) 0%, transparent 20%),
-                repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 60px),
-                repeating-linear-gradient(90deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 60px);
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 20%),
+                repeating-linear-gradient(0deg, rgba(212, 175, 55, 0.05) 0px, rgba(212, 175, 55, 0.05) 1px, transparent 1px, transparent 60px),
+                repeating-linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0px, rgba(212, 175, 55, 0.05) 1px, transparent 1px, transparent 60px);
             z-index: -2;
         }
         
-        /* Анимированные коробки */
-        .box {
-            position: absolute;
-            background: linear-gradient(145deg, #3a7bd5, #00d2ff);
-            border: 2px solid #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            z-index: -1;
-        }
-        
-        .box-label {
-            font-size: 10px;
-            text-align: center;
-            word-break: break-word;
-            padding: 4px;
-        }
-        
         .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+            border-radius: 15px;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(212, 175, 55, 0.3),
+                0 0 20px rgba(212, 175, 55, 0.1);
             width: 90%;
             max-width: 500px;
-            padding: 30px;
+            padding: 40px;
             text-align: center;
             position: relative;
             z-index: 10;
+            border: 1px solid rgba(212, 175, 55, 0.2);
             backdrop-filter: blur(10px);
+            margin: 30px 0;
+        }
+        
+        /* Декоративная рамка */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 1;
         }
         
         h1 {
-            color: #27ae60;
+            color: #d4af37;
             margin-bottom: 10px;
-            font-size: 32px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 36px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
             position: relative;
             display: inline-block;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            font-weight: bold;
         }
         
         h1::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -8px;
             left: 10%;
             right: 10%;
-            height: 3px;
+            height: 2px;
             background: linear-gradient(to right, transparent, #d4af37, transparent);
             border-radius: 2px;
         }
@@ -96,71 +95,91 @@
         h1::before {
             content: '';
             position: absolute;
-            top: -5px;
+            top: -8px;
             left: 10%;
             right: 10%;
-            height: 3px;
+            height: 2px;
             background: linear-gradient(to right, transparent, #d4af37, transparent);
             border-radius: 2px;
         }
         
         .subtitle {
-            color: #7f8c8d;
-            margin-bottom: 25px;
+            color: #a0a0a0;
+            margin-bottom: 30px;
             font-size: 16px;
         }
         
         .input-group {
-            margin: 20px 0;
+            margin: 25px 0;
             text-align: left;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 15px;
+            color: #d4af37;
+            font-size: 16px;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
         }
         
         input[type="time"],
         input[type="number"] {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
+            padding: 16px;
+            border: 1px solid #444;
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s;
             box-sizing: border-box;
-            background-color: #f8f9fa;
+            background: linear-gradient(145deg, #222, #1a1a1a);
+            color: #f3f0e8;
         }
         
         input[type="time"]:focus,
         input[type="number"]:focus {
-            border-color: #3498db;
+            border-color: #d4af37;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            background-color: white;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+            background: #1e1e1e;
         }
         
         button {
-            background: linear-gradient(to right, #3498db, #2980b9);
-            color: white;
+            background: linear-gradient(145deg, #d4af37, #b8860b);
+            color: #1a1a1a;
             border: none;
-            padding: 15px 30px;
+            padding: 16px 35px;
             font-size: 18px;
             border-radius: 8px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 25px;
             width: 100%;
             font-weight: 600;
             transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
         
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        button:hover::before {
+            left: 100%;
         }
         
         button:active {
@@ -169,15 +188,16 @@
         
         .result {
             margin-top: 30px;
-            padding: 20px;
-            background: linear-gradient(145deg, #f0f4f8, #e2e8f0);
-            border-radius: 8px;
+            padding: 25px;
+            background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+            border-radius: 10px;
             font-size: 20px;
             font-weight: 600;
-            color: #27ae60;
+            color: #d4af37;
             display: none;
-            border-left: 5px solid #27ae60;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            border-left: 3px solid #d4af37;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.1);
         }
         
         .overlay {
@@ -186,7 +206,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background: linear-gradient(135deg, #000 0%, #111 100%);
             display: none;
             justify-content: center;
             align-items: center;
@@ -202,7 +222,7 @@
             text-transform: uppercase;
             text-shadow: 0 0 30px rgba(212, 175, 55, 1);
             animation: pulse 1.5s infinite, glow 2s infinite alternate;
-            letter-spacing: 3px;
+            letter-spacing: 5px;
         }
         
         @keyframes pulse {
@@ -217,16 +237,17 @@
         }
         
         .progress-bar {
-            height: 8px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin: 20px 0;
+            height: 10px;
+            background: linear-gradient(145deg, #222, #1a1a1a);
+            border-radius: 5px;
+            margin: 25px 0;
             overflow: hidden;
+            border: 1px solid #444;
         }
         
         .progress {
             height: 100%;
-            background: linear-gradient(to right, #3498db, #2ecc71);
+            background: linear-gradient(to right, #d4af37, #f0c050);
             width: 0%;
             transition: width 0.5s;
             border-radius: 4px;
@@ -235,49 +256,52 @@
         .stats {
             display: flex;
             justify-content: space-around;
-            margin-top: 20px;
+            margin-top: 25px;
             text-align: center;
         }
         
         .stat-box {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 6px;
+            background: linear-gradient(145deg, #222, #1a1a1a);
+            padding: 15px;
+            border-radius: 8px;
             flex: 1;
-            margin: 0 5px;
+            margin: 0 8px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
         }
         
         .stat-value {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
         }
         
         .stat-label {
-            font-size: 12px;
-            color: #7f8c8d;
+            font-size: 13px;
+            color: #a0a0a0;
+            margin-top: 5px;
         }
         
         .footer {
-            margin-top: 20px;
-            color: #7f8c8d;
+            margin-top: 25px;
+            color: #777;
             font-size: 12px;
         }
         
         .loading {
             display: none;
             text-align: center;
-            margin: 20px 0;
+            margin: 25px 0;
         }
         
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
+            border: 4px solid rgba(212, 175, 55, 0.2);
             border-radius: 50%;
-            border-top: 4px solid #3498db;
-            width: 30px;
-            height: 30px;
+            border-top: 4px solid #d4af37;
+            width: 35px;
+            height: 35px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 0 auto 15px;
         }
         
         @keyframes spin {
@@ -288,76 +312,150 @@
         .error {
             color: #e74c3c;
             font-size: 14px;
-            margin-top: 5px;
+            margin-top: 8px;
             display: none;
-        }
-        
-        .success {
-            color: #27ae60;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        .highlight {
-            background-color: #fff9c4;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-weight: 600;
         }
         
         .time-display {
             font-size: 18px;
-            color: #2c3e50;
-            margin: 10px 0;
+            color: #d4af37;
+            margin: 15px 0;
             font-weight: 600;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
         }
         
         .prediction {
             font-style: italic;
-            color: #7f8c8d;
-            margin-top: 10px;
+            color: #a0a0a0;
+            margin-top: 15px;
         }
         
-        .visual-element {
+        /* Декоративные элементы */
+        .decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .decoration::before,
+        .decoration::after {
+            content: '';
             position: absolute;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(212, 175, 55, 0.1);
             border-radius: 50%;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-            animation: float 15s infinite linear;
         }
         
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(100vw, 100vh) rotate(360deg); }
+        .decoration::before {
+            top: 20%;
+            left: 10%;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .decoration::after {
+            bottom: 20%;
+            right: 10%;
+            animation: rotate 25s linear infinite reverse;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Секция топ-сотрудников */
+        .leaderboard-section {
+            width: 90%;
+            max-width: 800px;
+            background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(212, 175, 55, 0.3),
+                0 0 20px rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .leaderboard-title {
+            color: #d4af37;
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .employee-card {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(145deg, #222, #1a1a1a);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .employee-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .employee-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .employee-info {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .employee-name {
+            color: #d4af37;
+            font-size: 22px;
+            margin: 0 0 5px 0;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+        }
+        
+        .employee-position {
+            color: #a0a0a0;
+            font-size: 16px;
+            margin: 0 0 10px 0;
+        }
+        
+        .employee-description {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .gold-badge {
+            background: linear-gradient(145deg, #d4af37, #b8860b);
+            color: #1a1a1a;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 10px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-    <!-- Визуальные элементы фона -->
-    <div class="visual-element" style="top: 10%; left: 5%;"></div>
-    <div class="visual-element" style="top: 20%; right: 10%; animation-delay: -5s;"></div>
-    <div class="visual-element" style="bottom: 15%; left: 15%; animation-delay: -10s;"></div>
-    <div class="visual-element" style="bottom: 25%; right: 20%; animation-delay: -7s;"></div>
-    
-    <!-- Коробки на фоне -->
-    <div class="box" style="top: 15%; left: 10%; width: 80px; height: 60px; animation: floatBox 20s infinite linear;">
-        <div class="box-label">ЗАКАЗ<br>001</div>
-    </div>
-    <div class="box" style="top: 5%; right: 15%; width: 100px; height: 70px; animation: floatBox 25s infinite linear; animation-delay: -3s;">
-        <div class="box-label">ЗАКАЗ<br>002</div>
-    </div>
-    <div class="box" style="bottom: 10%; left: 20%; width: 70px; height: 80px; animation: floatBox 18s infinite linear; animation-delay: -8s;">
-        <div class="box-label">ЗАКАЗ<br>003</div>
-    </div>
-    <div class="box" style="bottom: 20%; right: 25%; width: 90px; height: 50px; animation: floatBox 22s infinite linear; animation-delay: -12s;">
-        <div class="box-label">ЗАКАЗ<br>004</div>
-    </div>
-    <div class="box" style="top: 30%; left: 5%; width: 60px; height: 90px; animation: floatBox 15s infinite linear; animation-delay: -2s;">
-        <div class="box-label">ЗАКАЗ<br>005</div>
-    </div>
+    <div class="decoration"></div>
     
     <div class="container">
         <h1>FIT</h1>
@@ -413,34 +511,45 @@
         </div>
     </div>
 
+    <div class="leaderboard-section">
+        <h2 class="leaderboard-title">ТОП Сотрудников</h2>
+        
+        <div class="employee-card">
+            <img src="https://i.postimg.cc/7hv9LmKq/6464b560-ed4f-4f4c-b0bc-a99b48cb4f69.jpg" alt="Александр Ляшенко" class="employee-image">
+            <div class="employee-info">
+                <h3 class="employee-name">Александр Ляшенко</h3>
+                <div class="employee-position">Топ размещения</div>
+                <p class="employee-description">
+                    Александр демонстрирует исключительные навыки в области размещения заказов. 
+                    Его эффективность и точность позволяют ему consistently быть лидером в своей области. 
+                    Александр обладает высоким уровнем ответственности и внимания к деталям, 
+                    что делает его незаменимым членом команды.
+                </p>
+                <div class="gold-badge">Лидер месяца</div>
+            </div>
+        </div>
+        
+        <div class="employee-card">
+            <img src="https://i.postimg.cc/VkTC15GF/IMG-4086.jpg" alt="Юрий Репной" class="employee-image">
+            <div class="employee-info">
+                <h3 class="employee-name">Юрий Репной</h3>
+                <div class="employee-position">Топ приемки</div>
+                <p class="employee-description">
+                    Юрий является экспертом в области приемки товаров. 
+                    Его опыт и внимание к качеству позволяют ему эффективно выявлять любые несоответствия. 
+                    Юрий обладает отличными организационными навыками и способен работать в условиях высокой загрузки, 
+                    при этом сохраняя высокое качество работы.
+                </p>
+                <div class="gold-badge">Профессионал года</div>
+            </div>
+        </div>
+    </div>
+
     <div id="overlay" class="overlay">
         <div class="overlay-content">СЕГОДНЯ БУДЕТ УЖИН!</div>
     </div>
 
     <script>
-        // Анимация коробок
-        function animateBoxes() {
-            const boxes = document.querySelectorAll('.box');
-            boxes.forEach(box => {
-                const x = (Math.random() - 0.5) * 2;
-                const y = (Math.random() - 0.5) * 2;
-                const duration = 15 + Math.random() * 15;
-                
-                box.style.setProperty('--x', `${x}px`);
-                box.style.setProperty('--y', `${y}px`);
-                box.style.setProperty('--duration', `${duration}s`);
-            });
-        }
-        
-        // Добавляем анимацию для коробок
-        const styleSheet = document.styleSheets[0];
-        const rule = '@keyframes floatBox { 0% { transform: translate(0, 0); } 100% { transform: translate(calc(var(--x) * 100vw), calc(var(--y) * 100vh)); } }';
-        if (styleSheet.insertRule) {
-            styleSheet.insertRule(rule, styleSheet.cssRules.length);
-        } else if (styleSheet.addRule) {
-            styleSheet.addRule('.box', rule);
-        }
-        
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             // Устанавливаем текущее время в поле "время начала"
@@ -448,9 +557,6 @@
             const currentHours = String(now.getHours()).padStart(2, '0');
             const currentMinutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('startTime').value = `${currentHours}:${currentMinutes}`;
-            
-            // Запускаем анимацию коробок
-            animateBoxes();
         });
         
         // Обработчик кнопки
@@ -589,18 +695,8 @@
             if (value && (isNaN(value) || parseInt(value) <= 0)) {
                 this.style.borderColor = '#e74c3c';
             } else {
-                this.style.borderColor = '#e0e0e0';
+                this.style.borderColor = '#444';
             }
-        });
-        
-        // Добавляем эффект при наведении на кнопку
-        const btn = document.getElementById('calculateBtn');
-        btn.addEventListener('mouseenter', function() {
-            this.style.background = 'linear-gradient(to right, #2980b9, #3498db)';
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            this.style.background = 'linear-gradient(to right, #3498db, #2980b9)';
         });
         
         // Добавляем анимацию для контейнера при загрузке
@@ -625,15 +721,6 @@
             if (e.key === 'Escape') {
                 document.getElementById('overlay').style.display = 'none';
             }
-        });
-        
-        // Добавляем анимацию для визуальных элементов
-        const visualElements = document.querySelectorAll('.visual-element');
-        visualElements.forEach(el => {
-            const size = 20 + Math.random() * 40;
-            el.style.width = `${size}px`;
-            el.style.height = `${size}px`;
-            el.style.animationDuration = `${15 + Math.random() * 15}s`;
         });
     </script>
 </body>
