@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор завершения сборки</title>
+    <style>
+        /* Основные стили */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a4d69 50%, #4b86b4 100%);
+        }
+        
+        /* Фон склада */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.05) 0%, transparent 20%),
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 60px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 60px);
+            z-index: -2;
+        }
+        
+        /* Анимированные коробки */
+        .box {
+            position: absolute;
+            background: linear-gradient(145deg, #3a7bd5, #00d2ff);
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            z-index: -1;
+        }
+        
+        .box-label {
+            font-size: 10px;
+            text-align: center;
+            word-break: break-word;
+            padding: 4px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            color: #27ae60;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+            letter-spacing: 2px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
+            border-radius: 2px;
+        }
+        
+        h1::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+        
+        input[type="time"],
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+        }
+        
+        input[type="time"]:focus,
+        input[type="number"]:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: white;
+        }
+        
+        button {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(145deg, #f0f4f8, #e2e8f0);
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #27ae60;
+            display: none;
+            border-left: 5px solid #27ae60;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .overlay-content {
+            color: #d4af37;
+            font-size: 64px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 1);
+            animation: pulse 1.5s infinite, glow 2s infinite alternate;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #d4af37, 0 0 30px #d4af37, 0 0 40px #d4af37; }
+            to { text-shadow: 0 0 30px #d4af37, 0 0 40px #d4af37, 0 0 50px #d4af37; }
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.5s;
+            border-radius: 4px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .time-display {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        
+        .prediction {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+        
+        .visual-element {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100vw, 100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Визуальные элементы фона -->
+    <div class="visual-element" style="top: 10%; left: 5%;"></div>
+    <div class="visual-element" style="top: 20%; right: 10%; animation-delay: -5s;"></div>
+    <div class="visual-element" style="bottom: 15%; left: 15%; animation-delay: -10s;"></div>
+    <div class="visual-element" style="bottom: 25%; right: 20%; animation-delay: -7s;"></div>
+    
+    <!-- Коробки на фоне -->
+    <div class="box" style="top: 15%; left: 10%; width: 80px; height: 60px; animation: floatBox 20s infinite linear;">
+        <div class="box-label">ЗАКАЗ<br>001</div>
+    </div>
+    <div class="box" style="top: 5%; right: 15%; width: 100px; height: 70px; animation: floatBox 25s infinite linear; animation-delay: -3s;">
+        <div class="box-label">ЗАКАЗ<br>002</div>
+    </div>
+    <div class="box" style="bottom: 10%; left: 20%; width: 70px; height: 80px; animation: floatBox 18s infinite linear; animation-delay: -8s;">
+        <div class="box-label">ЗАКАЗ<br>003</div>
+    </div>
+    <div class="box" style="bottom: 20%; right: 25%; width: 90px; height: 50px; animation: floatBox 22s infinite linear; animation-delay: -12s;">
+        <div class="box-label">ЗАКАЗ<br>004</div>
+    </div>
+    <div class="box" style="top: 30%; left: 5%; width: 60px; height: 90px; animation: floatBox 15s infinite linear; animation-delay: -2s;">
+        <div class="box-label">ЗАКАЗ<br>005</div>
+    </div>
+    
+    <div class="container">
+        <h1>FIT</h1>
+        <p class="subtitle">Калькулятор завершения сборки заказов</p>
+        
+        <div class="input-group">
+            <label for="startTime">Время начала сборки:</label>
+            <input type="time" id="startTime" required>
+            <div class="error" id="timeError">Введите корректное время</div>
+        </div>
+
+        <div class="input-group">
+            <label for="remainingLines">Количество оставшихся строк:</label>
+            <input type="number" id="remainingLines" placeholder="Введите количество строк" min="1" required>
+            <div class="error" id="linesError">Введите положительное число строк</div>
+        </div>
+
+        <button id="calculateBtn">Рассчитать время завершения</button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Рассчитываем время...</p>
+        </div>
+
+        <div id="result" class="result">
+            <!-- Результат будет вставлен сюда -->
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="hoursValue">0</div>
+                <div class="stat-label">ЧАСОВ</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="minutesValue">0</div>
+                <div class="stat-label">МИНУТ</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="linesValue">0</div>
+                <div class="stat-label">СТРОК</div>
+            </div>
+        </div>
+        
+        <div class="time-display" id="timeDisplay"></div>
+        <div class="prediction" id="prediction"></div>
+        
+        <div class="footer">
+            Точный расчет без учета перерывов
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay">
+        <div class="overlay-content">СЕГОДНЯ БУДЕТ УЖИН!</div>
+    </div>
+
+    <script>
+        // Анимация коробок
+        function animateBoxes() {
+            const boxes = document.querySelectorAll('.box');
+            boxes.forEach(box => {
+                const x = (Math.random() - 0.5) * 2;
+                const y = (Math.random() - 0.5) * 2;
+                const duration = 15 + Math.random() * 15;
+                
+                box.style.setProperty('--x', `${x}px`);
+                box.style.setProperty('--y', `${y}px`);
+                box.style.setProperty('--duration', `${duration}s`);
+            });
+        }
+        
+        // Добавляем анимацию для коробок
+        const styleSheet = document.styleSheets[0];
+        const rule = '@keyframes floatBox { 0% { transform: translate(0, 0); } 100% { transform: translate(calc(var(--x) * 100vw), calc(var(--y) * 100vh)); } }';
+        if (styleSheet.insertRule) {
+            styleSheet.insertRule(rule, styleSheet.cssRules.length);
+        } else if (styleSheet.addRule) {
+            styleSheet.addRule('.box', rule);
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Устанавливаем текущее время в поле "время начала"
+            const now = new Date();
+            const currentHours = String(now.getHours()).padStart(2, '0');
+            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('startTime').value = `${currentHours}:${currentMinutes}`;
+            
+            // Запускаем анимацию коробок
+            animateBoxes();
+        });
+        
+        // Обработчик кнопки
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const startTimeInput = document.getElementById('startTime').value;
+            const remainingLinesInput = document.getElementById('remainingLines').value;
+            
+            // Сброс ошибок
+            document.getElementById('timeError').style.display = 'none';
+            document.getElementById('linesError').style.display = 'none';
+            
+            let valid = true;
+            
+            if (!startTimeInput) {
+                document.getElementById('timeError').style.display = 'block';
+                valid = false;
+            }
+            
+            if (!remainingLinesInput || parseInt(remainingLinesInput) <= 0) {
+                document.getElementById('linesError').style.display = 'block';
+                valid = false;
+            }
+            
+            if (!valid) return;
+            
+            const remainingLines = parseInt(remainingLinesInput);
+            
+            // Показываем загрузку
+            document.getElementById('loading').style.display = 'block';
+            
+            // Имитация задержки для визуального эффекта
+            setTimeout(() => {
+                // Получаем текущую дату и устанавливаем начальное время
+                const now = new Date();
+                const [hours, minutes] = startTimeInput.split(':').map(Number);
+                const startTime = new Date(now);
+                startTime.setHours(hours, minutes, 0, 0);
+                
+                // Рассчитываем время в минутах (средняя скорость 650 строк/час)
+                const avgLinesPerHour = 650;
+                const minutesRequired = (remainingLines / avgLinesPerHour) * 60;
+                
+                // Добавляем дополнительное время если сборка проходит после 14:00
+                let additionalTime = 0;
+                const workDayEnd = new Date(startTime);
+                workDayEnd.setHours(16, 0, 0, 0); // 16:00 - конец приема маленьких заказов
+                
+                const estimatedEndTime = new Date(startTime.getTime() + minutesRequired * 60000);
+                
+                // Если предполагаемое время окончания после 16:00, добавляем время на маленькие заказы
+                if (estimatedEndTime > workDayEnd) {
+                    additionalTime = 15; // 15 минут на маленькие заказы
+                }
+                
+                // Если начальное время до 14:00 (2ч дня), добавляем время на основные заказы
+                const ordersEnd = new Date(startTime);
+                ordersEnd.setHours(14, 0, 0, 0);
+                
+                if (startTime < ordersEnd) {
+                    additionalTime += 10; // 10 минут на основные заказы
+                }
+                
+                // Общее время с учетом дополнительных факторов
+                const endTime = new Date(startTime.getTime() + (minutesRequired + additionalTime) * 60000);
+                
+                // Форматируем время для отображения
+                const options = { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false
+                };
+                const formattedTime = endTime.toLocaleTimeString('ru-RU', options);
+                const formattedDate = endTime.toLocaleDateString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                
+                // Определяем, следующий день или нет
+                let timeString = formattedTime;
+                if (endTime.getDate() !== now.getDate() || 
+                    endTime.getMonth() !== now.getMonth() || 
+                    endTime.getFullYear() !== now.getFullYear()) {
+                    timeString = `${formattedDate} в ${formattedTime}`;
+                } else {
+                    timeString = `сегодня в ${formattedTime}`;
+                }
+                
+                // Рассчитываем часы и минуты для статистики
+                const totalTimeMinutes = minutesRequired + additionalTime;
+                const hoursRequired = Math.floor(totalTimeMinutes / 60);
+                const minutesLeft = Math.floor(totalTimeMinutes % 60);
+                
+                // Обновляем статистику
+                document.getElementById('hoursValue').textContent = hoursRequired;
+                document.getElementById('minutesValue').textContent = minutesLeft;
+                document.getElementById('linesValue').textContent = remainingLines;
+                
+                // Обновляем прогресс-бар
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = '100%';
+                
+                // Обновляем время
+                document.getElementById('timeDisplay').textContent = `Время окончания: ${timeString}`;
+                
+                // Выводим результат
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    Примерное время завершения: <strong>${timeString}</strong><br>
+                    <small>С учетом дополнительных факторов</small>
+                `;
+                resultDiv.style.display = 'block';
+                
+                // Проверяем, если время окончания после 22:00
+                if (endTime.getHours() >= 22) {
+                    document.getElementById('overlay').style.display = 'flex';
+                    document.getElementById('prediction').textContent = "Прогноз: Ужин будет позже обычного!";
+                } else {
+                    document.getElementById('overlay').style.display = 'none';
+                    document.getElementById('prediction').textContent = "Прогноз: Ужин в обычное время";
+                }
+                
+                // Скрываем загрузку
+                document.getElementById('loading').style.display = 'none';
+                
+                // Сбрасываем прогресс-бар через 1 секунду
+                setTimeout(() => {
+                    progressBar.style.width = '0%';
+                }, 1000);
+            }, 800);
+        });
+        
+        // Валидация полей
+        document.getElementById('remainingLines').addEventListener('input', function() {
+            const value = this.value;
+            if (value && (isNaN(value) || parseInt(value) <= 0)) {
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.style.borderColor = '#e0e0e0';
+            }
+        });
+        
+        // Добавляем эффект при наведении на кнопку
+        const btn = document.getElementById('calculateBtn');
+        btn.addEventListener('mouseenter', function() {
+            this.style.background = 'linear-gradient(to right, #2980b9, #3498db)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.background = 'linear-gradient(to right, #3498db, #2980b9)';
+        });
+        
+        // Добавляем анимацию для контейнера при загрузке
+        document.querySelector('.container').style.opacity = '0';
+        document.querySelector('.container').style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            document.querySelector('.container').style.transition = 'opacity 0.5s, transform 0.5s';
+            document.querySelector('.container').style.opacity = '1';
+            document.querySelector('.container').style.transform = 'translateY(0)';
+        }, 100);
+        
+        // Добавляем обработчик для отображения overlay при изменении размера окна
+        window.addEventListener('resize', function() {
+            if (document.getElementById('overlay').style.display === 'flex') {
+                document.getElementById('overlay').style.display = 'flex';
+            }
+        });
+        
+        // Добавляем обработчик для закрытия overlay при нажатии клавиши Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('overlay').style.display = 'none';
+            }
+        });
+        
+        // Добавляем анимацию для визуальных элементов
+        const visualElements = document.querySelectorAll('.visual-element');
+        visualElements.forEach(el => {
+            const size = 20 + Math.random() * 40;
+            el.style.width = `${size}px`;
+            el.style.height = `${size}px`;
+            el.style.animationDuration = `${15 + Math.random() * 15}s`;
+        });
+    </script>
+</body>
+</html>
